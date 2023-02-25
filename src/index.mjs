@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import * as cheerio from "cheerio";
 import minimist from "minimist";
 import fs from "fs";
 import fetchHtml from "./util/fetchHtml.mjs";
