@@ -2,6 +2,9 @@ import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 import minimist from "minimist";
 import fs from "fs";
+import fetchHtml from "./util/fetchHtml.mjs";
+import parseHtml from "./util/parseHtml.mjs";
+
 
 async function crawl(
   url,
@@ -32,9 +35,9 @@ async function crawl(
       );
     }
 
-    //load the HTML content into Cheerio
-    const pageData = await response.text();
-    const $ = cheerio.load(pageData);
+  
+    const html = await fetchHtml(url);
+    const $ = parseHtml(html);
 
     //Get array of all the links on the page
     const links = $("a").get();

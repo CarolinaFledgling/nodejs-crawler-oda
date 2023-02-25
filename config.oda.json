@@ -2,6 +2,6 @@
     "url":"https://oda.com/no/",
     "file":"output/oda.result.json",
     "productClassName": ".product-list-item",
-    "maxPages":20,
+    "maxPages":1,
     "delay":1000
 }
