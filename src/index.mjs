@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
-import minimist from "minimist"; 
+import minimist from "minimist";
 import fs from "fs";
 
 async function crawl(
@@ -11,12 +11,10 @@ async function crawl(
   visitedPages,
   products
 ) {
- 
   if (visitedPages.length >= maxPages) {
     console.log(`Reached max pages ${maxPages}`);
     return;
   }
-
 
   if (visitedPages.includes(url)) {
     console.log(`Already visited ${url}`);
@@ -25,9 +23,7 @@ async function crawl(
 
   console.log(`Crawling ${url}`);
 
-
   try {
-
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -51,7 +47,6 @@ async function crawl(
         continue;
       }
 
-
       if (href.startsWith("/")) {
         href = "https://oda.com" + href;
       }
@@ -60,7 +55,6 @@ async function crawl(
       if (!href.includes("/categories/")) {
         continue;
       }
-
 
       if (visitedPages.length >= maxPages) {
         console.log(`Reached max pages (${maxPages})`);
@@ -72,27 +66,24 @@ async function crawl(
       // Get all the product elements on the page
       const productsElements = $(productClassName);
 
-
       for (const productEl of productsElements) {
-    
-        const name = $(productEl).find(".name .name-main").text().trim();
+        const name = $(productEl).find(".name .name-main")?.text().trim();
         const description = $(productEl)
           .find(".name .name-extra")
-          .text()
+          ?.text()
           .trim();
         const imageUrl = $(productEl).find(".image-container img")?.attr("src");
-        const price = $(productEl).find(".price").text().trim();
-        const unitPrice = $(productEl).find(".unit-price").text().trim();
+        const price = $(productEl).find(".price")?.text().trim();
+        const unitPrice = $(productEl).find(".unit-price")?.text().trim();
 
-       
         products.push({
           name,
           description,
           imageUrl,
           price,
           unitPrice,
-    
-          url
+
+          url,
         });
       }
 
@@ -129,7 +120,7 @@ async function crawlWebsite(config) {
 }
 
 // Command line interface
-const argv = minimist(process.argv.slice(2)); 
+const argv = minimist(process.argv.slice(2));
 const configFilePath = argv.config;
 const configJson = JSON.parse(fs.readFileSync(configFilePath).toString());
 
