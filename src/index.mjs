@@ -4,7 +4,7 @@ import minimist from "minimist";
 import fs from "fs";
 import fetchHtml from "./util/fetchHtml.mjs";
 import parseHtml from "./util/parseHtml.mjs";
-
+import extractProductData from "./util/extractProductData.mjs";
 
 async function crawl(
   url,
@@ -35,7 +35,6 @@ async function crawl(
       );
     }
 
-  
     const html = await fetchHtml(url);
     const $ = parseHtml(html);
 
@@ -70,24 +69,8 @@ async function crawl(
       const productsElements = $(productClassName);
 
       for (const productEl of productsElements) {
-        const name = $(productEl).find(".name .name-main")?.text().trim();
-        const description = $(productEl)
-          .find(".name .name-extra")
-          ?.text()
-          .trim();
-        const imageUrl = $(productEl).find(".image-container img")?.attr("src");
-        const price = $(productEl).find(".price")?.text().trim();
-        const unitPrice = $(productEl).find(".unit-price")?.text().trim();
-
-        products.push({
-          name,
-          description,
-          imageUrl,
-          price,
-          unitPrice,
-
-          url,
-        });
+        const productData = extractProductData($, productEl, url);
+        products.push(productData);
       }
 
       // Wait for delay before making the next request
