@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "crawl": "node ./src/index.mjs",
+    "crawl-oda": "node ./src/index.mjs --config=config.oda.json"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
+    "csv-writer": "^1.6.0",
     "minimist": "^1.2.8",
     "node-fetch": "^3.3.0"
   }

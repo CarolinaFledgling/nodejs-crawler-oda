@@ -5,6 +5,7 @@ function getLinks($, visitedPages) {
       let href = $(element).attr("href");
 
       if (!href) {
+        
         return undefined;
       }
 

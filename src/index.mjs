@@ -1,12 +1,11 @@
-import fetch from "node-fetch";
-import minimist from "minimist";
-import fs from "fs";
 import fetchHtml from "./util/fetchHtml.mjs";
 import parseHtml from "./util/parseHtml.mjs";
 import extractProductData from "./util/extractProductData.mjs";
 import getLinks from "./util/getLinks.mjs";
+import saveJsonAndCsvFiles from "./util/saveJsonAndCsvFiles.mjs";
+import getConfigFromCommandLine from "./util/getConfigFromCommandLine.mjs";
 
-let pageCount = 1; // keep track of the number of pages that have been crawled so far.
+let pageCount = 0; // keep track of the number of pages that have been crawled so far.
 
 async function crawl(
   url,
@@ -23,13 +22,13 @@ async function crawl(
     visitedPages.push(url);
   }
 
-  console.log(`Crawling ${url}`);
+  console.log(`Crawling starting for. ${url}`);
 
   try {
     const html = await fetchHtml(url);
     const $ = parseHtml(html);
 
-    //Get array of links must not be undefined ,contain  "/categories/" and must not have already been visited
+    //Get array of links must not be undefined, contain  "/categories/" and must not have already been visited
     const links = getLinks($, visitedPages);
 
     //Get all the product elements on the page
@@ -40,15 +39,22 @@ async function crawl(
       products.push(productData);
     }
 
-    for (let i = 0; i < links.length; i++) {
-      pageCount++;
+    console.log("Crawling completed for:", url);
 
-      if (pageCount <= maxPages) {
-        
+    console.log(
+      `Starting crawling for product links found on the page: ${url}. Links count:`,
+      links.length
+    );
+
+    for (let i = 0; i < links.length; i++) {
+
+      if (pageCount < maxPages || maxPages === 0) {
+        pageCount++;
+
         // Wait for delay before making the next request
         await new Promise((resolve) => setTimeout(resolve, delay));
 
-        //Recursively crawl the link
+        // Recursively crawl the link
         await crawl(
           links[i],
           maxPages,
@@ -58,11 +64,9 @@ async function crawl(
           products
         );
       } else {
-        console.log("limit reached");
+        // console.log("limit reached for:", url);
       }
     }
-
-    console.log(`Crawling stopped`);
   } catch (err) {
     console.error(`Error fetching products from url: ${url}`, err);
   }
@@ -73,16 +77,20 @@ async function crawlWebsite(config) {
   const visitedPages = []; // track of visited pages
   const products = []; // store the extracted products
 
+  pageCount = 1;
   await crawl(url, maxPages, delay, productClassName, visitedPages, products);
 
-  fs.writeFileSync(file, JSON.stringify(products, null, 2));
+  console.log("Visited pages count: ", visitedPages.length);
+
+  console.log("Saving file...");
+
+  await saveJsonAndCsvFiles(file, products);
+
+  console.log("Saving file completed");
 
   return products;
 }
 
-// Command line interface
-const argv = minimist(process.argv.slice(2));
-const configFilePath = argv.config;
-const configJson = JSON.parse(fs.readFileSync(configFilePath).toString());
+const configJson = getConfigFromCommandLine();
 
 crawlWebsite(configJson);
