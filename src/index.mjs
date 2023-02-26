@@ -29,10 +29,10 @@ async function crawl(
     const html = await fetchHtml(url);
     const $ = parseHtml(html);
 
-    //Get array of links must not be undefined,contain  "/categories/" and must not have already been visited
+    //Get array of links must not be undefined ,contain  "/categories/" and must not have already been visited
     const links = getLinks($, visitedPages);
 
-    // Get all the product elements on the page
+    //Get all the product elements on the page
     const productsElements = $(productClassName);
 
     for (const productEl of productsElements) {
@@ -44,6 +44,7 @@ async function crawl(
       pageCount++;
 
       if (pageCount <= maxPages) {
+        
         // Wait for delay before making the next request
         await new Promise((resolve) => setTimeout(resolve, delay));
 
