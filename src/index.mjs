@@ -15,11 +15,11 @@ async function crawl(
   visitedPages,
   products
 ) {
-  if (visitedPages.includes(url)) {
+  if (visitedPages.has(url)) {
     console.log(`Already visited ${url}`);
     return;
   } else {
-    visitedPages.push(url);
+    visitedPages.add(url);
   }
 
   console.log(`Crawling starting for. ${url}`);
@@ -47,7 +47,6 @@ async function crawl(
     );
 
     for (let i = 0; i < links.length; i++) {
-
       if (pageCount < maxPages || maxPages === 0) {
         pageCount++;
 
@@ -74,13 +73,13 @@ async function crawl(
 
 async function crawlWebsite(config) {
   const { url, file, productClassName, maxPages, delay } = config;
-  const visitedPages = []; // track of visited pages
+  const visitedPages = new Set(); // track of visited pages
   const products = []; // store the extracted products
 
   pageCount = 1;
   await crawl(url, maxPages, delay, productClassName, visitedPages, products);
 
-  console.log("Visited pages count: ", visitedPages.length);
+  console.log("Visited pages count: ", visitedPages.size);
 
   console.log("Saving file...");
 

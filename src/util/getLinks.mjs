@@ -16,7 +16,7 @@ function getLinks($, visitedPages) {
     })
     .filter(
       (href) =>
-        href && href.includes("/categories/") && !visitedPages.includes(href)
+        href && href.includes("/categories/") && !visitedPages.has(href)
     );
 }
 

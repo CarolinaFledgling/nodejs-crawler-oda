@@ -4,4 +4,5 @@
     "productClassName": ".product-list-item",
     "maxPages":10,
     "delay":1000
+   
 }
